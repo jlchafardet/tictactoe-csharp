@@ -93,24 +93,9 @@ The `GameResults` class represents the game results and is used for storing and 
 
 ## Example Output
 
+https://imgur.com/a/DUCXLZQ
+
 ```
-Do you want to play against a smart opponent? (yes/no): yes
-User, enter your move (0-8): 0
-Computer chose position 4
-User, enter your move (0-8): 1
-Computer chose position 8
-User, enter your move (0-8): 2
-Computer chose position 5
-User, enter your move (0-8): 3
-Computer chose position 6
-User, enter your move (0-8): 7
-
- X | X | X
----|---|---
- O | O |  
----|---|---
- O | X | O
-
 User wins!
 
 Game Results:
