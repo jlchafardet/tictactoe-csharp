@@ -13,7 +13,7 @@ This is a console-based Tic-Tac-Toe game implemented in C#. The game allows a us
 
 1. **Clone the repository**:
    ```sh
-   git clone https://github.com/your-username/tictactoe-csharp.git
+   git clone https://github.com/jlchafardet/tictactoe-csharp.git
    cd tictactoe-csharp
    ```
 
