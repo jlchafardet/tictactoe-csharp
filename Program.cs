@@ -24,8 +24,11 @@ class Program
 
         // Ask the player if they want to play against a smart opponent
         Console.WriteLine("Do you want to play against a smart opponent? (yes/no): ");
-        string response = Console.ReadLine().ToLower();
-        smartOpponent = (response == "yes");
+        string? response = Console.ReadLine();
+        if (response != null)
+        {
+            smartOpponent = (response.ToLower() == "yes");
+        }
 
         // Load previous game results from the JSON file
         GameResults results = LoadResults();
@@ -165,7 +168,8 @@ class Program
         if (File.Exists(resultsFilePath))
         {
             string json = File.ReadAllText(resultsFilePath); // Read the JSON file
-            return JsonSerializer.Deserialize<GameResults>(json); // Deserialize the JSON to a GameResults object
+            GameResults? results = JsonSerializer.Deserialize<GameResults>(json); // Deserialize the JSON to a GameResults object
+            return results ?? new GameResults(); // Return the deserialized object or a new GameResults object if null
         }
         return new GameResults(); // Return a new GameResults object if the file does not exist
     }
