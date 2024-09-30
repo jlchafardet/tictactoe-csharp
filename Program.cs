@@ -8,7 +8,7 @@ class Program
     // The game board is represented by an array of characters
     static char[] board = { '0', '1', '2', '3', '4', '5', '6', '7', '8' };
     // The current player, 'X' for user and 'O' for computer
-    static char player = 'X';
+    static char currentPlayer = 'X';
     // The file path where game results will be stored
     static string resultsFilePath = "gameResults.json";
     // Flag to check if the player wants to play against a smart opponent
@@ -29,99 +29,52 @@ class Program
     static void PlayGame()
     {
         int move; // Variable to store the player's move
-        int turns = 0; // Counter for the number of turns taken
+        int turnCount = 0; // Counter for the number of turns taken
         bool gameWon = false; // Flag to check if the game is won
-        Random rand = new Random(); // Random number generator for computer's move
+        Random random = new Random(); // Random number generator for computer's move
 
         // Reset the game board
-        board = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8' };
-        player = 'X'; // Reset the starting player
+        ResetBoard();
+        currentPlayer = 'X'; // Reset the starting player
 
         try
         {
             // Ask the player if they want to play against a smart opponent
-            Console.WriteLine("Do you want to play against a smart opponent? (yes/no): ");
-            string? response = Console.ReadLine();
-            if (response != null)
-            {
-                smartOpponent = (response.ToLower() == "yes");
-            }
+            smartOpponent = AskForSmartOpponent();
 
             // Load previous game results from the JSON file
             GameResults results = LoadResults();
 
             // Main game loop, runs until the game is won or all turns are taken
-            while (!gameWon && turns < 9)
+            while (!gameWon && turnCount < 9)
             {
                 Console.Clear(); // Clear the console screen
                 PrintBoard(); // Print the current state of the game board
 
-                if (player == 'X')
+                if (currentPlayer == 'X')
                 {
                     // User's turn
-                    Console.WriteLine("User, enter your move (0-8): ");
-                    string? input = Console.ReadLine();
-                    // Validate the user's input
-                    while (!int.TryParse(input, out move) || move < 0 || move > 8 || board[move] == 'X' || board[move] == 'O')
-                    {
-                        Console.WriteLine("Invalid move, try again.");
-                        input = Console.ReadLine();
-                    }
+                    move = GetUserMove();
                 }
                 else
                 {
                     // Computer's turn
-                    if (smartOpponent)
-                    {
-                        move = GetBestMove(); // Get the best move using the Minimax algorithm
-                    }
-                    else
-                    {
-                        // Generate a random move
-                        do
-                        {
-                            move = rand.Next(0, 9); // Generate a random move
-                        } while (board[move] == 'X' || board[move] == 'O'); // Ensure the move is valid
-                    }
-                    Console.WriteLine($"Computer chose position {move}");
+                    move = GetComputerMove(random);
                 }
 
                 // Update the board with the player's move
-                board[move] = player;
-                turns++; // Increment the turn counter
+                board[move] = currentPlayer;
+                turnCount++; // Increment the turn counter
                 gameWon = CheckWin(); // Check if the game is won
                 // Switch the player for the next turn
-                player = (player == 'X') ? 'O' : 'X';
+                currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
             }
 
             Console.Clear(); // Clear the console screen
             PrintBoard(); // Print the final state of the game board
 
             // Display the result of the game
-            if (gameWon)
-            {
-                if (player == 'X')
-                {
-                    Console.ForegroundColor = ConsoleColor.Red; // Set color for the losing message
-                    Console.WriteLine("Computer wins!");
-                    Console.ResetColor(); // Reset the console color
-                    results.Losses++; // Increment the loss counter for the user
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Green; // Set color for the winning message
-                    Console.WriteLine("User wins!");
-                    Console.ResetColor(); // Reset the console color
-                    results.Wins++; // Increment the win counter for the user
-                }
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow; // Set color for the draw message
-                Console.WriteLine("It's a draw!");
-                Console.ResetColor(); // Reset the console color
-                results.Ties++; // Increment the tie counter
-            }
+            DisplayGameResult(gameWon, results);
 
             // Save the updated results to the JSON file
             SaveResults(results);
@@ -132,6 +85,84 @@ class Program
         {
             // Handle any unexpected errors
             Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+    }
+
+    // Method to reset the game board
+    static void ResetBoard()
+    {
+        board = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8' };
+    }
+
+    // Method to ask the player if they want to play against a smart opponent
+    static bool AskForSmartOpponent()
+    {
+        Console.WriteLine("Do you want to play against a smart opponent? (yes/no): ");
+        string? response = Console.ReadLine();
+        return response != null && response.ToLower() == "yes";
+    }
+
+    // Method to get the user's move
+    static int GetUserMove()
+    {
+        int move;
+        Console.WriteLine("User, enter your move (0-8): ");
+        string? input = Console.ReadLine();
+        // Validate the user's input
+        while (!int.TryParse(input, out move) || move < 0 || move > 8 || board[move] == 'X' || board[move] == 'O')
+        {
+            Console.WriteLine("Invalid move, try again.");
+            input = Console.ReadLine();
+        }
+        return move;
+    }
+
+    // Method to get the computer's move
+    static int GetComputerMove(Random random)
+    {
+        int move;
+        if (smartOpponent)
+        {
+            move = GetBestMove(); // Get the best move using the Minimax algorithm
+        }
+        else
+        {
+            // Generate a random move
+            do
+            {
+                move = random.Next(0, 9); // Generate a random move
+            } while (board[move] == 'X' || board[move] == 'O'); // Ensure the move is valid
+        }
+        Console.WriteLine($"Computer chose position {move}");
+        return move;
+    }
+
+    // Method to display the result of the game
+    static void DisplayGameResult(bool gameWon, GameResults results)
+    {
+        if (gameWon)
+        {
+            if (currentPlayer == 'X')
+            {
+                Console.ForegroundColor = ConsoleColor.Red; // Set color for the losing message
+                Console.WriteLine("Computer wins!");
+                Console.ResetColor(); // Reset the console color
+                results.Losses++; // Increment the loss counter for the user
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Green; // Set color for the winning message
+                Console.WriteLine("User wins!");
+                Console.ResetColor(); // Reset the console color
+                results.Wins++; // Increment the win counter for the user
+            }
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow; // Set color for the draw message
+            Console.WriteLine("It's a draw!");
+            Console.ResetColor(); // Reset the console color
+            results.Ties++; // Increment the tie counter
         }
     }
 
