@@ -1,9 +1,12 @@
 ﻿using System;
+using System.IO;
+using System.Text.Json;
 
 class Program
 {
     static char[] board = { '0', '1', '2', '3', '4', '5', '6', '7', '8' };
     static char player = 'X';
+    static string resultsFilePath = "gameResults.json";
 
     static void Main(string[] args)
     {
@@ -11,6 +14,8 @@ class Program
         int turns = 0;
         bool gameWon = false;
         Random rand = new Random();
+
+        GameResults results = LoadResults();
 
         while (!gameWon && turns < 9)
         {
@@ -43,7 +48,27 @@ class Program
 
         Console.Clear();
         PrintBoard();
-        Console.WriteLine(gameWon ? $"{(player == 'X' ? "Computer" : "User")} wins!" : "It's a draw!");
+        if (gameWon)
+        {
+            if (player == 'X')
+            {
+                Console.WriteLine("Computer wins!");
+                results.Losses++;
+            }
+            else
+            {
+                Console.WriteLine("User wins!");
+                results.Wins++;
+            }
+        }
+        else
+        {
+            Console.WriteLine("It's a draw!");
+            results.Ties++;
+        }
+
+        SaveResults(results);
+        DisplayResults(results);
     }
 
     static void PrintBoard()
@@ -99,4 +124,35 @@ class Program
         }
         return false;
     }
+
+    static GameResults LoadResults()
+    {
+        if (File.Exists(resultsFilePath))
+        {
+            string json = File.ReadAllText(resultsFilePath);
+            return JsonSerializer.Deserialize<GameResults>(json);
+        }
+        return new GameResults();
+    }
+
+    static void SaveResults(GameResults results)
+    {
+        string json = JsonSerializer.Serialize(results);
+        File.WriteAllText(resultsFilePath, json);
+    }
+
+    static void DisplayResults(GameResults results)
+    {
+        Console.WriteLine("\nGame Results:");
+        Console.WriteLine($"Wins: {results.Wins}");
+        Console.WriteLine($"Losses: {results.Losses}");
+        Console.WriteLine($"Ties: {results.Ties}");
+    }
+}
+
+class GameResults
+{
+    public int Wins { get; set; }
+    public int Losses { get; set; }
+    public int Ties { get; set; }
 }
