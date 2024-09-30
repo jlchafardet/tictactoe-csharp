@@ -99,18 +99,24 @@ class Program
             {
                 if (player == 'X')
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Computer wins!");
+                    Console.ResetColor();
                     results.Losses++; // Increment the loss counter for the user
                 }
                 else
                 {
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("User wins!");
+                    Console.ResetColor();
                     results.Wins++; // Increment the win counter for the user
                 }
             }
             else
             {
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("It's a draw!");
+                Console.ResetColor();
                 results.Ties++; // Increment the tie counter
             }
 
@@ -128,6 +134,7 @@ class Program
     // Method to print the current state of the game board
     static void PrintBoard()
     {
+        Console.WriteLine("Current Board:");
         for (int i = 0; i < board.Length; i++)
         {
             if (i % 3 == 0 && i != 0)
