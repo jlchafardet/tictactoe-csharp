@@ -152,15 +152,14 @@ class Program
 }
 ```
 
-### Sample Output for initial Game Board and User Input
+### Sample Output for Initial Game Board and User Input
 
 ```plaintext
-1|2|3
+2|3
 -----
-4|5|6
+5|6
 -----
-7|8|9
-
+8|9
 ```
 
 ## Step 3: Enhancements
@@ -245,6 +244,16 @@ static void PrintBoard()
 // ... existing code ...
 ```
 
+### Sample Output with Colors
+
+```plaintext
+2|3
+-----
+5|6
+-----
+8|9
+```
+
 ## Step 4: Storing and Displaying Results
 
 ### Store Game Results
@@ -317,6 +326,15 @@ class GameResults
     public int Losses { get; set; } // Property to store the number of losses
     public int Ties { get; set; } // Property to store the number of ties
 }
+```
+
+### Sample Output for Game Results
+
+```plaintext
+Game Results:
+Wins: 0
+Losses: 0
+Ties: 0
 ```
 
 ## Step 5: Smart Opponent
@@ -483,6 +501,12 @@ static int Minimax(char[,] board, int depth, bool isMaximizing)
         return bestValue; // Return the best value
     }
 }
+```
+
+### Sample Output for Smart Opponent Option
+
+```plaintext
+Do you want to play against a smart opponent? (yes/no): yes
 ```
 
 ## Conclusion
