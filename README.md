@@ -93,7 +93,7 @@ The `GameResults` class represents the game results and is used for storing and 
 
 ## Example Output
 
-(https://imgur.com/a/DUCXLZQ)
+[https://imgur.com/a/DUCXLZQ]
 
 ```
 User wins!
