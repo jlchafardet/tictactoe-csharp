@@ -152,6 +152,17 @@ class Program
 }
 ```
 
+### Sample Output for initial Game Board and User Input
+
+```plaintext
+1|2|3
+-----
+4|5|6
+-----
+7|8|9
+
+```
+
 ## Step 3: Enhancements
 
 ### 1-9 Selection Instead of x/y Coordinates
