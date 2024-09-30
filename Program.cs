@@ -11,6 +11,8 @@ class Program
     static char player = 'X';
     // The file path where game results will be stored
     static string resultsFilePath = "gameResults.json";
+    // Flag to check if the player wants to play against a smart opponent
+    static bool smartOpponent = false;
 
     // The main method, the entry point of the program
     static void Main(string[] args)
@@ -19,6 +21,11 @@ class Program
         int turns = 0; // Counter for the number of turns taken
         bool gameWon = false; // Flag to check if the game is won
         Random rand = new Random(); // Random number generator for computer's move
+
+        // Ask the player if they want to play against a smart opponent
+        Console.WriteLine("Do you want to play against a smart opponent? (yes/no): ");
+        string response = Console.ReadLine().ToLower();
+        smartOpponent = (response == "yes");
 
         // Load previous game results from the JSON file
         GameResults results = LoadResults();
@@ -42,10 +49,17 @@ class Program
             else
             {
                 // Computer's turn
-                do
+                if (smartOpponent)
                 {
-                    move = rand.Next(0, 9); // Generate a random move
-                } while (board[move] == 'X' || board[move] == 'O'); // Ensure the move is valid
+                    move = GetBestMove(); // Get the best move using the Minimax algorithm
+                }
+                else
+                {
+                    do
+                    {
+                        move = rand.Next(0, 9); // Generate a random move
+                    } while (board[move] == 'X' || board[move] == 'O'); // Ensure the move is valid
+                }
                 Console.WriteLine($"Computer chose position {move}");
             }
 
@@ -170,6 +184,95 @@ class Program
         Console.WriteLine($"Wins: {results.Wins}"); // Display the number of wins
         Console.WriteLine($"Losses: {results.Losses}"); // Display the number of losses
         Console.WriteLine($"Ties: {results.Ties}"); // Display the number of ties
+    }
+
+    // Method to get the best move for the computer using the Minimax algorithm
+    static int GetBestMove()
+    {
+        int bestMove = -1;
+        int bestValue = int.MinValue;
+
+        // Loop through all possible moves
+        for (int i = 0; i < board.Length; i++)
+        {
+            // Check if the cell is empty
+            if (board[i] != 'X' && board[i] != 'O')
+            {
+                char original = board[i]; // Store the original value
+                board[i] = 'O'; // Make the move for the computer
+                int moveValue = Minimax(board, 0, false); // Get the value of the move using Minimax
+                board[i] = original; // Undo the move
+
+                // Update the best move if the current move is better
+                if (moveValue > bestValue)
+                {
+                    bestMove = i;
+                    bestValue = moveValue;
+                }
+            }
+        }
+
+        return bestMove; // Return the best move
+    }
+
+    // Minimax algorithm to evaluate the best move
+    static int Minimax(char[] board, int depth, bool isMaximizing)
+    {
+        // Check if the game is won
+        if (CheckWin())
+        {
+            return isMaximizing ? -1 : 1;
+        }
+
+        // Check if the game is a draw
+        if (Array.IndexOf(board, '0') == -1 && Array.IndexOf(board, '1') == -1 && Array.IndexOf(board, '2') == -1 &&
+            Array.IndexOf(board, '3') == -1 && Array.IndexOf(board, '4') == -1 && Array.IndexOf(board, '5') == -1 &&
+            Array.IndexOf(board, '6') == -1 && Array.IndexOf(board, '7') == -1 && Array.IndexOf(board, '8') == -1)
+        {
+            return 0;
+        }
+
+        // If it's the computer's turn (maximizing player)
+        if (isMaximizing)
+        {
+            int bestValue = int.MinValue;
+
+            // Loop through all possible moves
+            for (int i = 0; i < board.Length; i++)
+            {
+                // Check if the cell is empty
+                if (board[i] != 'X' && board[i] != 'O')
+                {
+                    char original = board[i]; // Store the original value
+                    board[i] = 'O'; // Make the move for the computer
+                    int moveValue = Minimax(board, depth + 1, false); // Get the value of the move using Minimax
+                    board[i] = original; // Undo the move
+                    bestValue = Math.Max(bestValue, moveValue); // Update the best value
+                }
+            }
+
+            return bestValue; // Return the best value
+        }
+        else // If it's the user's turn (minimizing player)
+        {
+            int bestValue = int.MaxValue;
+
+            // Loop through all possible moves
+            for (int i = 0; i < board.Length; i++)
+            {
+                // Check if the cell is empty
+                if (board[i] != 'X' && board[i] != 'O')
+                {
+                    char original = board[i]; // Store the original value
+                    board[i] = 'X'; // Make the move for the user
+                    int moveValue = Minimax(board, depth + 1, true); // Get the value of the move using Minimax
+                    board[i] = original; // Undo the move
+                    bestValue = Math.Min(bestValue, moveValue); // Update the best value
+                }
+            }
+
+            return bestValue; // Return the best value
+        }
     }
 }
 
