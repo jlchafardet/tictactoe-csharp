@@ -1,17 +1,21 @@
 # Tutorial: Building a Tic-Tac-Toe Game in C#
 
 ## Introduction
+
 Welcome to this step-by-step tutorial on building a Tic-Tac-Toe game in C#. This tutorial is designed for beginners who want to learn how to develop a simple console-based game from scratch. By the end of this tutorial, you will have a fully functional Tic-Tac-Toe game with various features, including a smart opponent using the Minimax algorithm.
 
 ### Objective
+
 - Build a console-based Tic-Tac-Toe game in C#.
 
 ### Prerequisites
+
 - Basic understanding of C# and programming concepts.
 
 ## Step 1: Setting Up the Project
 
 ### Create a New Console Application
+
 1. Open Visual Studio or your preferred C# IDE.
 2. Create a new Console Application project.
 3. Name the project "TicTacToe".
@@ -19,6 +23,7 @@ Welcome to this step-by-step tutorial on building a Tic-Tac-Toe game in C#. This
 ## Step 2: Basic Tic-Tac-Toe Game
 
 ### Define the Game Board and Print Method
+
 1. **Define the Game Board**:
    - Use a 2D array to represent the game board.
    - Initialize the board with numbers 1-9.
@@ -160,11 +165,13 @@ class Program
 5|6
 -----
 8|9
+User, enter your move (row and column): 
 ```
 
 ## Step 3: Enhancements
 
 ### 1-9 Selection Instead of x/y Coordinates
+
 Update the game to use 1-9 selection for moves.
 
 ```csharp:Program.cs
@@ -191,6 +198,17 @@ if (player == 'X')
 // ... existing code ...
 ```
 
+### Sample Output for 1-9 Selection
+
+```plaintext
+2|3
+-----
+5|6
+-----
+8|9
+User, enter your move (1-9): 
+```
+
 ### Screen Clearing
 
 Add screen clearing to improve the user experience.
@@ -206,6 +224,17 @@ while (!gameWon && turns < 9)
 Console.Clear(); // Clear the console screen
 PrintBoard(); // Print the final state of the game board
 // ... existing code ...
+```
+
+### Sample Output for Screen Clearing
+
+```plaintext
+2|3
+-----
+5|6
+-----
+8|9
+User, enter your move (1-9): 
 ```
 
 ### Add Colors
