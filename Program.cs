@@ -22,85 +22,93 @@ class Program
         bool gameWon = false; // Flag to check if the game is won
         Random rand = new Random(); // Random number generator for computer's move
 
-        // Ask the player if they want to play against a smart opponent
-        Console.WriteLine("Do you want to play against a smart opponent? (yes/no): ");
-        string? response = Console.ReadLine();
-        if (response != null)
+        try
         {
-            smartOpponent = (response.ToLower() == "yes");
-        }
-
-        // Load previous game results from the JSON file
-        GameResults results = LoadResults();
-
-        // Main game loop, runs until the game is won or all turns are taken
-        while (!gameWon && turns < 9)
-        {
-            Console.Clear(); // Clear the console screen
-            PrintBoard(); // Print the current state of the game board
-
-            if (player == 'X')
+            // Ask the player if they want to play against a smart opponent
+            Console.WriteLine("Do you want to play against a smart opponent? (yes/no): ");
+            string? response = Console.ReadLine();
+            if (response != null)
             {
-                // User's turn
-                Console.WriteLine("User, enter your move (0-8): ");
-                // Input validation loop
-                while (!int.TryParse(Console.ReadLine(), out move) || move < 0 || move > 8 || board[move] == 'X' || board[move] == 'O')
-                {
-                    Console.WriteLine("Invalid move, try again.");
-                }
+                smartOpponent = (response.ToLower() == "yes");
             }
-            else
+
+            // Load previous game results from the JSON file
+            GameResults results = LoadResults();
+
+            // Main game loop, runs until the game is won or all turns are taken
+            while (!gameWon && turns < 9)
             {
-                // Computer's turn
-                if (smartOpponent)
+                Console.Clear(); // Clear the console screen
+                PrintBoard(); // Print the current state of the game board
+
+                if (player == 'X')
                 {
-                    move = GetBestMove(); // Get the best move using the Minimax algorithm
+                    // User's turn
+                    Console.WriteLine("User, enter your move (0-8): ");
+                    string? input = Console.ReadLine();
+                    while (!int.TryParse(input, out move) || move < 0 || move > 8 || board[move] == 'X' || board[move] == 'O')
+                    {
+                        Console.WriteLine("Invalid move, try again.");
+                        input = Console.ReadLine();
+                    }
                 }
                 else
                 {
-                    do
+                    // Computer's turn
+                    if (smartOpponent)
                     {
-                        move = rand.Next(0, 9); // Generate a random move
-                    } while (board[move] == 'X' || board[move] == 'O'); // Ensure the move is valid
+                        move = GetBestMove(); // Get the best move using the Minimax algorithm
+                    }
+                    else
+                    {
+                        do
+                        {
+                            move = rand.Next(0, 9); // Generate a random move
+                        } while (board[move] == 'X' || board[move] == 'O'); // Ensure the move is valid
+                    }
+                    Console.WriteLine($"Computer chose position {move}");
                 }
-                Console.WriteLine($"Computer chose position {move}");
+
+                // Update the board with the player's move
+                board[move] = player;
+                turns++; // Increment the turn counter
+                gameWon = CheckWin(); // Check if the game is won
+                // Switch the player for the next turn
+                player = (player == 'X') ? 'O' : 'X';
             }
 
-            // Update the board with the player's move
-            board[move] = player;
-            turns++; // Increment the turn counter
-            gameWon = CheckWin(); // Check if the game is won
-            // Switch the player for the next turn
-            player = (player == 'X') ? 'O' : 'X';
-        }
+            Console.Clear(); // Clear the console screen
+            PrintBoard(); // Print the final state of the game board
 
-        Console.Clear(); // Clear the console screen
-        PrintBoard(); // Print the final state of the game board
-
-        // Display the result of the game
-        if (gameWon)
-        {
-            if (player == 'X')
+            // Display the result of the game
+            if (gameWon)
             {
-                Console.WriteLine("Computer wins!");
-                results.Losses++; // Increment the loss counter for the user
+                if (player == 'X')
+                {
+                    Console.WriteLine("Computer wins!");
+                    results.Losses++; // Increment the loss counter for the user
+                }
+                else
+                {
+                    Console.WriteLine("User wins!");
+                    results.Wins++; // Increment the win counter for the user
+                }
             }
             else
             {
-                Console.WriteLine("User wins!");
-                results.Wins++; // Increment the win counter for the user
+                Console.WriteLine("It's a draw!");
+                results.Ties++; // Increment the tie counter
             }
-        }
-        else
-        {
-            Console.WriteLine("It's a draw!");
-            results.Ties++; // Increment the tie counter
-        }
 
-        // Save the updated results to the JSON file
-        SaveResults(results);
-        // Display the updated results
-        DisplayResults(results);
+            // Save the updated results to the JSON file
+            SaveResults(results);
+            // Display the updated results
+            DisplayResults(results);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
     }
 
     // Method to print the current state of the game board
@@ -165,20 +173,34 @@ class Program
     // Method to load game results from a JSON file
     static GameResults LoadResults()
     {
-        if (File.Exists(resultsFilePath))
+        try
         {
-            string json = File.ReadAllText(resultsFilePath); // Read the JSON file
-            GameResults? results = JsonSerializer.Deserialize<GameResults>(json); // Deserialize the JSON to a GameResults object
-            return results ?? new GameResults(); // Return the deserialized object or a new GameResults object if null
+            if (File.Exists(resultsFilePath))
+            {
+                string json = File.ReadAllText(resultsFilePath); // Read the JSON file
+                GameResults? results = JsonSerializer.Deserialize<GameResults>(json); // Deserialize the JSON to a GameResults object
+                return results ?? new GameResults(); // Return the deserialized object or a new GameResults object if null
+            }
         }
-        return new GameResults(); // Return a new GameResults object if the file does not exist
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while loading results: {ex.Message}");
+        }
+        return new GameResults(); // Return a new GameResults object if the file does not exist or an error occurs
     }
 
     // Method to save game results to a JSON file
     static void SaveResults(GameResults results)
     {
-        string json = JsonSerializer.Serialize(results); // Serialize the GameResults object to JSON
-        File.WriteAllText(resultsFilePath, json); // Write the JSON to the file
+        try
+        {
+            string json = JsonSerializer.Serialize(results); // Serialize the GameResults object to JSON
+            File.WriteAllText(resultsFilePath, json); // Write the JSON to the file
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while saving results: {ex.Message}");
+        }
     }
 
     // Method to display the game results
