@@ -12,12 +12,14 @@ This is a console-based Tic-Tac-Toe game implemented in C#. The game allows a us
 ## How to Run
 
 1. **Clone the repository**:
+
    ```sh
    git clone https://github.com/jlchafardet/tictactoe-csharp.git
    cd tictactoe-csharp
    ```
 
 2. **Build and run the application**:
+
    ```sh
    dotnet run
    ```
