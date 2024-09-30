@@ -10,17 +10,29 @@ class Program
         int move;
         int turns = 0;
         bool gameWon = false;
+        Random rand = new Random();
 
         while (!gameWon && turns < 9)
         {
             Console.Clear();
             PrintBoard();
-            Console.WriteLine($"Player {player}, enter your move (0-8): ");
-            
-            // Input validation
-            while (!int.TryParse(Console.ReadLine(), out move) || move < 0 || move > 8 || board[move] == 'X' || board[move] == 'O')
+            if (player == 'X')
             {
-                Console.WriteLine("Invalid move, try again.");
+                Console.WriteLine("User, enter your move (0-8): ");
+                // Input validation
+                while (!int.TryParse(Console.ReadLine(), out move) || move < 0 || move > 8 || board[move] == 'X' || board[move] == 'O')
+                {
+                    Console.WriteLine("Invalid move, try again.");
+                }
+            }
+            else
+            {
+                // Computer's move
+                do
+                {
+                    move = rand.Next(0, 9);
+                } while (board[move] == 'X' || board[move] == 'O');
+                Console.WriteLine($"Computer chose position {move}");
             }
 
             board[move] = player;
@@ -31,7 +43,7 @@ class Program
 
         Console.Clear();
         PrintBoard();
-        Console.WriteLine(gameWon ? $"Player {(player == 'X' ? 'O' : 'X')} wins!" : "It's a draw!");
+        Console.WriteLine(gameWon ? $"{(player == 'X' ? "Computer" : "User")} wins!" : "It's a draw!");
     }
 
     static void PrintBoard()
