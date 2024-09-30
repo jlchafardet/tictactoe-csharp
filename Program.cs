@@ -48,11 +48,37 @@ class Program
 
     static void PrintBoard()
     {
-        Console.WriteLine(" {0} | {1} | {2} ", board[0], board[1], board[2]);
-        Console.WriteLine("---|---|---");
-        Console.WriteLine(" {0} | {1} | {2} ", board[3], board[4], board[5]);
-        Console.WriteLine("---|---|---");
-        Console.WriteLine(" {0} | {1} | {2} ", board[6], board[7], board[8]);
+        for (int i = 0; i < board.Length; i++)
+        {
+            if (i % 3 == 0 && i != 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\n---|---|---");
+            }
+
+            if (i % 3 != 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write("|");
+            }
+
+            if (board[i] == 'X')
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+            }
+            else if (board[i] == 'O')
+            {
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+
+            Console.Write($" {board[i]} ");
+        }
+        Console.ResetColor();
+        Console.WriteLine();
     }
 
     static bool CheckWin()
