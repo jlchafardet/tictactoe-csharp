@@ -17,11 +17,12 @@ class Program
     // The main method, the entry point of the program
     static void Main(string[] args)
     {
+        // Loop to allow the user to play multiple games without restarting the application
         do
         {
-            PlayGame();
-            Console.WriteLine("Do you want to play again? (yes/no): ");
-        } while (Console.ReadLine()?.ToLower() == "yes");
+            PlayGame(); // Play a single game
+            Console.WriteLine("Do you want to play again? (yes/no): "); // Ask if the user wants to play again
+        } while (Console.ReadLine()?.ToLower() == "yes"); // Continue if the user inputs "yes"
     }
 
     // Method to play a single game
@@ -60,6 +61,7 @@ class Program
                     // User's turn
                     Console.WriteLine("User, enter your move (0-8): ");
                     string? input = Console.ReadLine();
+                    // Validate the user's input
                     while (!int.TryParse(input, out move) || move < 0 || move > 8 || board[move] == 'X' || board[move] == 'O')
                     {
                         Console.WriteLine("Invalid move, try again.");
@@ -75,6 +77,7 @@ class Program
                     }
                     else
                     {
+                        // Generate a random move
                         do
                         {
                             move = rand.Next(0, 9); // Generate a random move
@@ -99,24 +102,24 @@ class Program
             {
                 if (player == 'X')
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.ForegroundColor = ConsoleColor.Red; // Set color for the losing message
                     Console.WriteLine("Computer wins!");
-                    Console.ResetColor();
+                    Console.ResetColor(); // Reset the console color
                     results.Losses++; // Increment the loss counter for the user
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.ForegroundColor = ConsoleColor.Green; // Set color for the winning message
                     Console.WriteLine("User wins!");
-                    Console.ResetColor();
+                    Console.ResetColor(); // Reset the console color
                     results.Wins++; // Increment the win counter for the user
                 }
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.ForegroundColor = ConsoleColor.Yellow; // Set color for the draw message
                 Console.WriteLine("It's a draw!");
-                Console.ResetColor();
+                Console.ResetColor(); // Reset the console color
                 results.Ties++; // Increment the tie counter
             }
 
@@ -127,6 +130,7 @@ class Program
         }
         catch (Exception ex)
         {
+            // Handle any unexpected errors
             Console.WriteLine($"An error occurred: {ex.Message}");
         }
     }
@@ -204,6 +208,7 @@ class Program
             }
             catch (Exception ex)
             {
+                // Handle any errors that occur during loading
                 Console.WriteLine($"An error occurred while loading results: {ex.Message}");
             }
         }
@@ -220,6 +225,7 @@ class Program
         }
         catch (Exception ex)
         {
+            // Handle any errors that occur during saving
             Console.WriteLine($"An error occurred while saving results: {ex.Message}");
         }
     }
@@ -236,8 +242,8 @@ class Program
     // Method to get the best move for the computer using the Minimax algorithm
     static int GetBestMove()
     {
-        int bestMove = -1;
-        int bestValue = int.MinValue;
+        int bestMove = -1; // Variable to store the best move
+        int bestValue = int.MinValue; // Variable to store the best value
 
         // Loop through all possible moves
         for (int i = 0; i < board.Length; i++)
