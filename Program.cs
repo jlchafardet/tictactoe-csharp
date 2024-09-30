@@ -17,10 +17,24 @@ class Program
     // The main method, the entry point of the program
     static void Main(string[] args)
     {
+        do
+        {
+            PlayGame();
+            Console.WriteLine("Do you want to play again? (yes/no): ");
+        } while (Console.ReadLine()?.ToLower() == "yes");
+    }
+
+    // Method to play a single game
+    static void PlayGame()
+    {
         int move; // Variable to store the player's move
         int turns = 0; // Counter for the number of turns taken
         bool gameWon = false; // Flag to check if the game is won
         Random rand = new Random(); // Random number generator for computer's move
+
+        // Reset the game board
+        board = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8' };
+        player = 'X'; // Reset the starting player
 
         try
         {
@@ -173,20 +187,20 @@ class Program
     // Method to load game results from a JSON file
     static GameResults LoadResults()
     {
-        try
+        if (File.Exists(resultsFilePath))
         {
-            if (File.Exists(resultsFilePath))
+            try
             {
                 string json = File.ReadAllText(resultsFilePath); // Read the JSON file
                 GameResults? results = JsonSerializer.Deserialize<GameResults>(json); // Deserialize the JSON to a GameResults object
                 return results ?? new GameResults(); // Return the deserialized object or a new GameResults object if null
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while loading results: {ex.Message}");
+            }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occurred while loading results: {ex.Message}");
-        }
-        return new GameResults(); // Return a new GameResults object if the file does not exist or an error occurs
+        return new GameResults(); // Return a new GameResults object if the file does not exist
     }
 
     // Method to save game results to a JSON file
